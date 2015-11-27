@@ -57,6 +57,13 @@
 
                         scope.key = angular.isDefined(attr.spinnerKey) ? attr.spinnerKey : false;
 
+                        // store inital key incase stop/start is immediately called
+                        var initalKey = angular.copy(scope.key);
+                        // observe the attribute 'spinnerKey' and assign it to scope.key on change
+                        attr.$observe('spinnerKey', function(val){
+                            scope.key = val;
+                        })
+
                         scope.startActive = angular.isDefined(attr.spinnerStartActive) ?
                             scope.$eval(attr.spinnerStartActive) : scope.key ?
                             false : true;
@@ -104,13 +111,15 @@
                         }
 
                         scope.$on('us-spinner:spin', function (event, key) {
-                            if (key === scope.key) {
+                            // if the boradcast key matches scope's or inital
+                            if ((key === scope.key) || (scope.key === initalKey)) {
                                 scope.spin();
                             }
                         });
 
                         scope.$on('us-spinner:stop', function (event, key) {
-                            if (key === scope.key) {
+                            // if the boradcast key matches scope's or inital
+                            if ((key === scope.key) || (scope.key === initalKey)) {
                                 scope.stop();
                             }
                         });
